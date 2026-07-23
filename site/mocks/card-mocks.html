@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Card mocks — Integrity Kutz N' Stylez</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/cards.css">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  body { padding: 3rem var(--pad) 6rem; }
+  .mock-section { margin-bottom: 4.5rem; max-width: 1280px; margin-inline: auto; }
+  .mock-section > h2 { margin-bottom: 0.5rem; }
+  .mock-note { color: var(--graphite); max-width: 62ch; margin: 0 0 2rem; }
+  .mock-row { display: flex; flex-wrap: wrap; gap: 2.5rem; align-items: flex-start; }
+  .mock-item { width: 260px; }
+  .mock-item--narrow { width: 240px; }
+  .mock-label { font-size: 0.8125rem; font-weight: 600; color: var(--ink); margin: 0 0 0.2rem; }
+  .mock-sub { font-size: 0.8125rem; color: var(--slate); margin: 0 0 0.9rem; line-height: 1.45; }
+
+  /* render faces statically, side by side */
+  .mockcard { position: relative; aspect-ratio: 5 / 7; perspective: none; }
+  .mockcard .tcard-face { position: absolute; inset: 0; transform: none; backface-visibility: visible; }
+
+  /* ============ FRONT VARIANTS ============ */
+
+  /* F1 — specialty line (replaces "Barber") */
+  .f1 .tcard-plate p { letter-spacing: 0.08em; }
+
+  /* F2 — instagram handle as the sub-line, in trim color */
+  .f2 .tcard-plate p { text-transform: none; letter-spacing: 0.01em; font-size: 0.78rem; color: var(--red); }
+  .f2 .tcard--blue .tcard-plate p, .f2.tcard--blue .tcard-plate p { color: var(--blue); }
+
+  /* F3 — number plate: name left, big trim № right, no sub-line */
+  .f3 .tcard-plate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    padding: 0.55rem 0.85rem 0.7rem;
+  }
+  .f3 .tcard-plate h3 { font-size: 1.3rem; }
+  .f3 .tcard-plate .plate-num {
+    font-size: 1.45rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--red);
+  }
+  .f3 .tcard--blue .plate-num, .f3.tcard--blue .plate-num { color: var(--blue); }
+  .f3 .tcard-topline { justify-content: center; }
+
+  /* ============ BACK VARIANTS ============ */
+
+  /* shared back polish for all variants */
+  .polished .tcard-face--back { padding: 1rem 1rem 0.9rem; gap: 0.55rem; }
+  .polished .tcard-back-head { gap: 0.55rem; padding-bottom: 0.6rem; }
+  .polished .tcard-back-head img { height: 34px; }
+  .polished .tcard-brandline { letter-spacing: 0.1em; }
+  .polished .tcard-serial { font-variant-numeric: tabular-nums; font-size: 0.75rem; }
+  .polished .tcard-back-name h3 { font-size: 1.25rem; }
+  .polished .tcard-stats dt { letter-spacing: 0.1em; }
+  .polished .tcard-bio { overflow: hidden; }
+  .polished .tcard-face--back .tcard-flip { font-size: 0.6875rem; min-height: 24px; }
+
+  /* B1 — stat sheet: no bio, each specialty its own row, roomy */
+  .b1 .tcard-brandline { white-space: nowrap; letter-spacing: 0.08em; }
+  .b1 .tcard-back-head img { height: 26px; }
+  .b1 .tcard-stats > div { padding: 0.36rem 0; }
+  .b1 .tcard-stats dd { font-size: 0.78rem; }
+  .b1 .tcard-stats { flex: 1; align-content: start; }
+  .b1 .b1-spacer { flex: 1; }
+
+  /* B2 — fitted bio: compact single-line header buys room for the full bio */
+  .b2 .tcard-face--back { padding: 0.8rem 0.85rem; gap: 0.45rem; }
+  .b2 .tcard-back-head { padding-bottom: 0.45rem; }
+  .b2 .tcard-back-head img { height: 24px; }
+  .b2 .tcard-brandline { white-space: nowrap; letter-spacing: 0.08em; }
+  .b2 .tcard-back-name h3 { font-size: 1.1rem; }
+  .b2 .tcard-stats > div { padding: 0.26rem 0; }
+  .b2 .tcard-stats dt { font-size: 0.5625rem; }
+  .b2 .tcard-stats dd { font-size: 0.66rem; }
+  .b2 .tcard-bio { font-size: 0.65rem; line-height: 1.4; }
+  .b2 .tcard-face--back .pill { min-height: 36px; font-size: 0.75rem; }
+
+  /* B3 — ghost number: watermark №, bio clamped to two lines */
+  .b3 .tcard-face--back { position: absolute; overflow: hidden; }
+  .b3 .ghost-num {
+    position: absolute;
+    right: -0.35rem;
+    bottom: 4.2rem;
+    font-size: 9.5rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--red);
+    opacity: 0.07;
+    pointer-events: none;
+    user-select: none;
+  }
+  .b3 .tcard--blue .ghost-num, .b3.tcard--blue .ghost-num { color: var(--blue); }
+  .b3 .tcard-bio {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .b3 .tcard-stats > div { padding: 0.42rem 0; }
+</style>
+</head>
+<body>
+
+<div class="mock-section">
+  <p class="eyebrow eyebrow--red">Card refinement</p>
+  <h2 class="display">Front variants</h2>
+  <p class="mock-note">All three drop the "Barber" label. Pick the sub-line that earns its place — or none at all.</p>
+  <div class="mock-row">
+
+    <div class="mock-item f1">
+      <p class="mock-label">F1 — Specialty line</p>
+      <p class="mock-sub">Their top two specialties where "Barber" was. Informative, unique to each guy.</p>
+      <div class="mockcard tcard">
+        <div class="tcard-face tcard-face--front">
+          <div class="tcard-photo">
+            <div class="tcard-topline"><span>IKS · Roster '26</span><span class="tcard-num">№ 01</span></div>
+            <img src="../assets/web/lewis-portrait-480.webp" alt="Portrait of Lewis">
+          </div>
+          <div class="tcard-plate">
+            <h3>Lewis</h3>
+            <p>Full-service · Cosmetology</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mock-item f2">
+      <p class="mock-label">F2 — Handle line</p>
+      <p class="mock-sub">Their @handle in the trim color. Personal, promotes their page — but three barbers have no Instagram, so their cards would sit empty.</p>
+      <div class="mockcard tcard tcard--blue">
+        <div class="tcard-face tcard-face--front">
+          <div class="tcard-photo">
+            <div class="tcard-topline"><span>IKS · Roster '26</span><span class="tcard-num">№ 04</span></div>
+            <img src="../assets/web/marquis-portrait-480.webp" alt="Portrait of Marquis">
+          </div>
+          <div class="tcard-plate">
+            <h3>Marquis</h3>
+            <p>@m_m_quisdabeast</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mock-item f3">
+      <p class="mock-label">F3 — Number plate (recommended)</p>
+      <p class="mock-sub">No sub-line at all. Name left, jersey number right in the trim color, brand line centered up top. The most "actual trading card" of the three — clean at every size, works for all eleven.</p>
+      <div class="mockcard tcard">
+        <div class="tcard-face tcard-face--front">
+          <div class="tcard-photo">
+            <div class="tcard-topline"><span>IKS · Roster '26</span></div>
+            <img src="../assets/web/ruben-portrait-480.webp" alt="Portrait of Ruben">
+          </div>
+          <div class="tcard-plate">
+            <h3>Ruben</h3>
+            <span class="plate-num">№ 03</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="mock-section">
+  <p class="eyebrow eyebrow--blue">Card refinement</p>
+  <h2 class="display">Back variants</h2>
+  <p class="mock-note">All three kill the scrollbar — nothing overflows, ever. They differ in what earns the space.</p>
+  <div class="mock-row">
+
+    <div class="mock-item polished b1">
+      <p class="mock-label">B1 — Stat sheet</p>
+      <p class="mock-sub">Bio gone; every specialty gets its own stat row like a season line. Roomiest and most premium — but loses the personal sentence.</p>
+      <div class="mockcard tcard">
+        <div class="tcard-face tcard-face--back">
+          <div class="tcard-back-head">
+            <img src="../assets/web/logo-300.png" alt="">
+            <span class="tcard-brandline">Official roster card</span>
+            <span class="tcard-serial">01/11</span>
+          </div>
+          <div class="tcard-back-name">
+            <h3>Lewis</h3>
+            <span>№ 01</span>
+          </div>
+          <dl class="tcard-stats">
+            <div><dt>Specialty</dt><dd>Full-service cuts</dd></div>
+            <div><dt>Specialty</dt><dd>Cosmetology</dd></div>
+            <div><dt>Specialty</dt><dd>Consultation</dd></div>
+            <div><dt>Home shop</dt><dd>Tracy, CA</dd></div>
+            <div><dt>Instagram</dt><dd><a href="#">@ls3_thebarber</a></dd></div>
+          </dl>
+          <span class="b1-spacer"></span>
+          <a class="pill pill--primary" href="#">Book with Lewis</a>
+          <button class="tcard-flip" type="button">Flip back</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mock-item mock-item--narrow polished b2">
+      <p class="mock-label">B2 — Fitted bio (recommended)</p>
+      <p class="mock-sub">Keeps the full bio, tuned so it fits without scrolling. Shown here with the longest bio on the roster at the narrowest card width the site ever renders — the worst case on the whole site.</p>
+      <div class="mockcard tcard">
+        <div class="tcard-face tcard-face--back">
+          <div class="tcard-back-head">
+            <img src="../assets/web/logo-300.png" alt="">
+            <span class="tcard-brandline">Official roster card</span>
+            <span class="tcard-serial">01/11</span>
+          </div>
+          <div class="tcard-back-name">
+            <h3>Lewis</h3>
+            <span>№ 01</span>
+          </div>
+          <dl class="tcard-stats">
+            <div><dt>Specialties</dt><dd>Full-service cuts, Cosmetology, Consultation</dd></div>
+            <div><dt>Instagram</dt><dd><a href="#">@ls3_thebarber</a></dd></div>
+          </dl>
+          <p class="tcard-bio">A licensed barber and cosmetologist with more than 25 years behind the chair and over 21 years as a shop owner. Lewis delivers unrushed, full-service work built on quality and integrity.</p>
+          <a class="pill pill--primary" href="#">Book with Lewis</a>
+          <button class="tcard-flip" type="button">Flip back</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mock-item polished b3">
+      <p class="mock-label">B3 — Ghost number</p>
+      <p class="mock-sub">Giant watermark number behind the stats, bio clamped to two lines. The most collectible-looking — but it cuts bios mid-sentence.</p>
+      <div class="mockcard tcard tcard--blue">
+        <div class="tcard-face tcard-face--back">
+          <span class="ghost-num">04</span>
+          <div class="tcard-back-head">
+            <img src="../assets/web/logo-300.png" alt="">
+            <span class="tcard-brandline">Integrity Kutz N' Stylez<br>Official roster card</span>
+            <span class="tcard-serial">04/11</span>
+          </div>
+          <div class="tcard-back-name">
+            <h3>Marquis</h3>
+            <span>№ 04</span>
+          </div>
+          <dl class="tcard-stats">
+            <div><dt>Specialties</dt><dd>Classic cuts, Modern styles, Fades</dd></div>
+            <div><dt>Home shop</dt><dd>Tracy, CA</dd></div>
+            <div><dt>Instagram</dt><dd><a href="#">@m_m_quisdabeast</a></dd></div>
+          </dl>
+          <p class="tcard-bio">Marquis combines experience with a friendly chair-side approach, covering classic cuts, modern styles, and tailored finishing work.</p>
+          <a class="pill pill--primary" href="#">Book with Marquis</a>
+          <button class="tcard-flip" type="button">Flip back</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
