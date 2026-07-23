@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1422">
+  <meta name="description" content="Wire Runner is a first-person conversion delivery simulator for Transamerica training.">
+  <title>Wire Runner | The Conversion Delivery Simulator</title>
+  <link rel="icon" href="assets/wire-runner-mark.svg" type="image/svg+xml">
+  <style>
+    :root {
+      color-scheme: dark;
+      --navy-950: #08111d;
+      --navy-900: #0d1828;
+      --navy-800: #15243a;
+      --paper: #f6f2ea;
+      --mist: #c9d1d9;
+      --muted: #96a3b2;
+      --red: #e32735;
+      --red-deep: #b71f2b;
+      --amber: #f0b44d;
+      --line: rgba(246, 242, 234, .18);
+      --glass: rgba(8, 17, 29, .78);
+      --pointer-x: 50%;
+      --pointer-y: 50%;
+      font-family: "Aptos", "Segoe UI", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-width: 320px; background: var(--navy-950); }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      overflow-x: hidden;
+      color: var(--paper);
+      background: var(--navy-950);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -2.5rem;
+      z-index: 0;
+      background-image: url("assets/wire-runner-road.webp");
+      background-size: cover;
+      background-position: var(--pointer-x) var(--pointer-y);
+      filter: saturate(.82) contrast(1.04);
+      transform: scale(1.035);
+      transition: background-position 900ms cubic-bezier(.2, .75, .2, 1);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        linear-gradient(90deg, rgba(6, 13, 23, .97) 0%, rgba(6, 13, 23, .88) 30%, rgba(6, 13, 23, .36) 61%, rgba(6, 13, 23, .2) 100%),
+        linear-gradient(0deg, rgba(6, 13, 23, .78) 0%, transparent 38%),
+        radial-gradient(circle at 82% 18%, transparent 0%, rgba(6, 13, 23, .22) 54%, rgba(6, 13, 23, .7) 100%);
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: .09;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+    }
+
+    .site-shell {
+      position: relative;
+      z-index: 1;
+      min-height: 100svh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: clamp(1.25rem, 3vw, 2.8rem) clamp(1.25rem, 4vw, 4.6rem) 1.4rem;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      opacity: 0;
+      animation: arrive .7s .05s ease forwards;
+    }
+
+    .transamerica-lockup {
+      display: inline-flex;
+      align-items: center;
+      padding: .72rem .9rem;
+      border-radius: .35rem;
+      background: rgba(255, 255, 255, .96);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, .18);
+    }
+
+    .transamerica-lockup img {
+      display: block;
+      width: clamp(10rem, 14vw, 13rem);
+      height: auto;
+    }
+
+    .internal-label {
+      display: inline-flex;
+      align-items: center;
+      gap: .65rem;
+      color: var(--mist);
+      font-size: .71rem;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .internal-label::before {
+      content: "";
+      width: .48rem;
+      height: .48rem;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 0 .25rem rgba(240, 180, 77, .13);
+    }
+
+    .scene {
+      align-self: center;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem);
+      gap: clamp(2rem, 7vw, 7rem);
+      align-items: end;
+      padding-block: clamp(3.5rem, 10vh, 8rem) clamp(2.5rem, 7vh, 5rem);
+    }
+
+    .hero-copy {
+      min-width: 0;
+      max-width: 51rem;
+      opacity: 0;
+      transform: translateY(1rem);
+      animation: arrive .85s .2s ease forwards;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      margin: 0 0 1rem;
+      color: var(--mist);
+      font-size: clamp(.69rem, 1vw, .8rem);
+      font-weight: 750;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 2.8rem;
+      height: 2px;
+      background: var(--red);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 8ch;
+      font-family: "Arial Narrow", "Aptos Narrow", "Roboto Condensed", sans-serif;
+      font-size: clamp(4.4rem, 11vw, 9.6rem);
+      font-weight: 900;
+      line-height: .78;
+      letter-spacing: -.075em;
+      text-transform: uppercase;
+      text-wrap: balance;
+      text-shadow: 0 10px 45px rgba(0, 0, 0, .38);
+    }
+
+    h1 em {
+      display: block;
+      margin-left: .46em;
+      color: var(--red);
+      font-style: normal;
+      letter-spacing: -.08em;
+    }
+
+    .construction {
+      max-width: 33rem;
+      margin: clamp(2rem, 4vh, 3rem) 0 0;
+      padding-left: 1.1rem;
+      border-left: 3px solid var(--amber);
+      font-size: clamp(1.15rem, 2vw, 1.55rem);
+      font-weight: 550;
+      line-height: 1.4;
+      text-wrap: balance;
+    }
+
+    .promise {
+      max-width: 35rem;
+      margin: 1rem 0 0 1.25rem;
+      color: var(--muted);
+      font-size: clamp(.86rem, 1.1vw, .98rem);
+      line-height: 1.55;
+    }
+
+    .route-card {
+      position: relative;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      padding: 1rem 1rem .85rem;
+      border: 1px solid var(--line);
+      border-radius: .55rem;
+      background: var(--glass);
+      box-shadow: 0 22px 55px rgba(0, 0, 0, .3);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transform: translateY(1rem);
+      animation: arrive .85s .42s ease forwards;
+    }
+
+    .route-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(255,255,255,.05), transparent 45%);
+    }
+
+    .route-head {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .15rem .15rem .85rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .route-kicker,
+    .route-state {
+      margin: 0;
+      font-size: .64rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .route-kicker { color: var(--mist); }
+    .route-state { color: var(--amber); }
+
+    .route-map {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin-top: .25rem;
+    }
+
+    .map-grid { stroke: rgba(255, 255, 255, .065); stroke-width: 1; }
+    .map-road { fill: none; stroke: rgba(246, 242, 234, .12); stroke-width: 18; stroke-linecap: round; }
+    .route-base { fill: none; stroke: rgba(227, 39, 53, .23); stroke-width: 7; stroke-linecap: round; }
+    .route-progress {
+      fill: none;
+      stroke: var(--red);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 14 9;
+      animation: drive 2.8s linear infinite;
+    }
+    .node-ring { fill: var(--navy-900); stroke: var(--paper); stroke-width: 2; }
+    .node-ring.wire { stroke: var(--amber); stroke-width: 3; }
+    .node-core { fill: var(--red); }
+    .node-core.wire { fill: var(--amber); }
+    .node-label { fill: var(--paper); font: 800 11px "Segoe UI", sans-serif; letter-spacing: .09em; }
+    .map-note { fill: var(--muted); font: 700 8px "Segoe UI", sans-serif; letter-spacing: .15em; }
+
+    .route-meta {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: .75rem;
+      align-items: center;
+      padding: .75rem .15rem .05rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .route-meta strong {
+      font-family: "Arial Narrow", "Aptos Narrow", sans-serif;
+      font-size: .78rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .route-meta span {
+      color: var(--muted);
+      font-size: .7rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .bends {
+      display: flex;
+      align-items: center;
+      gap: .22rem;
+    }
+
+    .bends i {
+      display: block;
+      width: .32rem;
+      height: 1rem;
+      border-radius: .1rem;
+      background: var(--red);
+      transform: skewX(-18deg);
+    }
+
+    .bends i:nth-child(4), .bends i:nth-child(5) { background: rgba(227, 39, 53, .22); }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: rgba(246, 242, 234, .52);
+      font-size: .64rem;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: arrive .7s .65s ease forwards;
+    }
+
+    .footer p { margin: 0; }
+
+    .route-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: .7rem;
+    }
+
+    .route-mark img { width: 1.8rem; height: 1.8rem; border-radius: .5rem; }
+
+    @keyframes drive { to { stroke-dashoffset: -46; } }
+
+    @keyframes arrive {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 800px) {
+      body::before { background-position: 63% center; }
+      body::after {
+        background:
+          linear-gradient(180deg, rgba(6, 13, 23, .78) 0%, rgba(6, 13, 23, .42) 35%, rgba(6, 13, 23, .96) 69%, #06101d 100%);
+      }
+
+      .site-shell { padding: 1rem 1rem .9rem; }
+      .brand-row { align-items: flex-start; }
+      .transamerica-lockup { padding: .58rem .68rem; }
+      .transamerica-lockup img { width: 8.7rem; }
+      .internal-label { max-width: 8rem; justify-content: flex-end; text-align: right; font-size: .58rem; line-height: 1.35; }
+
+      .scene {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2rem;
+        align-items: start;
+        padding-block: clamp(4rem, 18vh, 9.5rem) 2.4rem;
+      }
+
+      h1 { font-size: clamp(4.2rem, 24vw, 7rem); }
+      .construction { max-width: 23rem; margin-top: 1.65rem; }
+      .promise { max-width: 22rem; }
+      .route-card { width: min(100%, 25rem); justify-self: end; }
+      .footer { align-items: flex-end; }
+      .footer > p { max-width: 10rem; text-align: right; line-height: 1.4; }
+    }
+
+    @media (max-width: 430px) {
+      .scene { padding-top: 5.6rem; }
+      .eyebrow { letter-spacing: .13em; }
+      h1 { font-size: clamp(4rem, 20vw, 5.2rem); }
+      h1 em { margin-left: .2em; }
+      .route-card { padding: .8rem .8rem .7rem; }
+      .footer { font-size: .55rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+
+      body::before { background-position: center !important; }
+      .route-progress { stroke-dashoffset: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="site-shell">
+    <header class="brand-row">
+      <div class="transamerica-lockup">
+        <img src="assets/transamerica-logo.svg" alt="Transamerica">
+      </div>
+      <span class="internal-label">Internal training experience</span>
+    </header>
+
+    <main class="scene">
+      <section class="hero-copy" aria-labelledby="wire-runner-title">
+        <p class="eyebrow">The Conversion Delivery Simulator</p>
+        <h1 id="wire-runner-title">Wire <em>Runner</em></h1>
+        <p class="construction">Site under construction. Check back soon.</p>
+        <p class="promise">Every route bends. Every handoff matters. The wire does not move.</p>
+      </section>
+
+      <aside class="route-card" aria-labelledby="route-preview-title">
+        <div class="route-head">
+          <p class="route-kicker" id="route-preview-title">Route preview</p>
+          <p class="route-state">Pre-trip</p>
+        </div>
+
+        <svg class="route-map" viewBox="0 0 340 250" role="img" aria-label="Route from D1 through EFF to WIRE">
+          <defs>
+            <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+              <path class="map-grid" d="M28 0H0V28" fill="none"/>
+            </pattern>
+            <filter id="route-glow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <rect width="340" height="250" rx="5" fill="url(#grid)"/>
+          <path class="map-road" d="M29 211C55 142 126 217 145 139S230 117 221 58 278 35 314 22"/>
+          <path class="route-base" d="M29 211C55 142 126 217 145 139S230 117 221 58 278 35 314 22"/>
+          <path class="route-progress" filter="url(#route-glow)" d="M29 211C55 142 126 217 145 139S230 117 221 58 278 35 314 22"/>
+
+          <g transform="translate(30 211)">
+            <circle class="node-ring" r="10"/>
+            <circle class="node-core" r="4"/>
+            <text class="node-label" x="15" y="4">D1</text>
+          </g>
+          <g transform="translate(162 115)">
+            <circle class="node-ring" r="10"/>
+            <circle class="node-core" r="4"/>
+            <text class="node-label" x="15" y="4">EFF</text>
+          </g>
+          <g transform="translate(304 26)">
+            <circle class="node-ring wire" r="11"/>
+            <circle class="node-core wire" r="4.5"/>
+            <text class="node-label" x="-58" y="4">WIRE</text>
+          </g>
+          <text class="map-note" x="18" y="18">TACTICAL OVERVIEW / ROUTE 01</text>
+        </svg>
+
+        <div class="route-meta">
+          <div>
+            <strong>Complexity</strong><br>
+            <span>Controlled curves</span>
+          </div>
+          <div class="bends" aria-label="Three of five complexity indicators active">
+            <i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <div class="route-mark">
+        <img src="assets/wire-runner-mark.svg" alt="">
+        <span>First-person route training</span>
+      </div>
+      <p>Built for the road to wire</p>
+    </footer>
+  </div>
+
+  <script>
+    (() => {
+      const finePointer = matchMedia('(pointer: fine)').matches;
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!finePointer || reducedMotion) return;
+
+      addEventListener('pointermove', (event) => {
+        const x = 48 + (event.clientX / innerWidth - 0.5) * 3;
+        const y = 50 + (event.clientY / innerHeight - 0.5) * 2;
+        document.documentElement.style.setProperty('--pointer-x', `${x}%`);
+        document.documentElement.style.setProperty('--pointer-y', `${y}%`);
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>
