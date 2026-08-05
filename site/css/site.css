@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../assets/fonts/inter-latin.woff2) format('woff2');
+}
+
 /* Integrity Kutz N' Stylez — editorial system per DESIGN.md (runwayml-inspired)
    Monochrome ink-on-canvas; red/blue reserved for barber-pole brand accents. */
 
