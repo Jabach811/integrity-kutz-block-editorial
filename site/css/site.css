@@ -774,6 +774,24 @@ html:not(.js) .roster-fallback a { color: var(--ink); }
     transform: none;
   }
 }
+/* ---------- Kids ---------- */
+
+.kids-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.kids-grid .work-tile {
+  aspect-ratio: 3 / 4;
+}
+
+@media (min-width: 900px) {
+  .kids-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* Secondary sections — editorial system per DESIGN.md: .shop, .visit, .site-footer */
 
 /* ---------- Shop ---------- */
