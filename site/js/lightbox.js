@@ -8,17 +8,17 @@
   var style = document.createElement('style');
   style.textContent =
     '.lightbox-dialog{border:0;padding:0;max-width:none;max-height:none;width:100%;height:100%;background:transparent;}' +
-    '.lightbox-dialog::backdrop{background:rgba(20,32,27,0.92);}' +
+    '.lightbox-dialog::backdrop{background:rgba(3,3,3,0.94);}' +
     '.lightbox-inner{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:clamp(1rem,4vw,3rem);}' +
     '.lightbox-inner img{max-width:100%;max-height:100%;object-fit:contain;}' +
-    '.lightbox-btn{position:absolute;top:50%;transform:translateY(-50%);min-width:44px;min-height:44px;border:0;background:rgba(20,32,27,0.6);color:#FBF8F1;font-size:1.5rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}' +
-    '.lightbox-btn:hover{background:rgba(20,32,27,0.85);}' +
-    '.lightbox-btn:focus-visible{outline:2px solid #E8542F;outline-offset:2px;}' +
+    '.lightbox-btn{position:absolute;top:50%;transform:translateY(-50%);min-width:44px;min-height:44px;border:0;background:rgba(3,3,3,0.62);color:#ffffff;font-size:1.5rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}' +
+    '.lightbox-btn:hover{background:rgba(3,3,3,0.88);}' +
+    '.lightbox-btn:focus-visible{outline:2px solid #B22234;outline-offset:2px;}' +
     '.lightbox-prev{left:0.5rem;}' +
     '.lightbox-next{right:0.5rem;}' +
-    '.lightbox-close{position:absolute;top:0.5rem;right:0.5rem;min-width:44px;min-height:44px;border:0;background:rgba(20,32,27,0.6);color:#FBF8F1;font-size:1.5rem;line-height:1;cursor:pointer;}' +
-    '.lightbox-close:hover{background:rgba(20,32,27,0.85);}' +
-    '.lightbox-close:focus-visible{outline:2px solid #E8542F;outline-offset:2px;}';
+    '.lightbox-close{position:absolute;top:0.5rem;right:0.5rem;min-width:44px;min-height:44px;border:0;background:rgba(3,3,3,0.62);color:#ffffff;font-size:1.5rem;line-height:1;cursor:pointer;}' +
+    '.lightbox-close:hover{background:rgba(3,3,3,0.88);}' +
+    '.lightbox-close:focus-visible{outline:2px solid #B22234;outline-offset:2px;}';
   document.head.appendChild(style);
 
   var dialog = document.createElement('dialog');

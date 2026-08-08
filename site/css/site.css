@@ -31,7 +31,10 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4rem;
+}
 
 body {
   margin: 0;
@@ -175,8 +178,16 @@ h1, h2, h3 {
 .site-nav a:hover { color: var(--on-dark); }
 
 @media (max-width: 640px) {
-  .site-nav { display: none; }
   .brand span { display: none; }
+  .brand img { height: 34px; }
+  .site-nav {
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .site-nav::-webkit-scrollbar { display: none; }
+  .site-nav a { font-size: 0.75rem; white-space: nowrap; }
 }
 
 /* ---------- Hero ---------- */
@@ -328,6 +339,9 @@ section { padding: clamp(4rem, 9vh, 6rem) 0; }
 }
 .reveal.is-in { opacity: 1; transform: none; }
 
+/* scripts off or failed: never leave the page blank below the hero */
+html:not(.js) .reveal { opacity: 1; transform: none; transition: none; }
+
 /* ---------- Reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -376,6 +390,13 @@ section { padding: clamp(4rem, 9vh, 6rem) 0; }
   color: var(--stone);
 }
 @media (max-width: 719px) { .swipe-hint { display: block; } }
+
+.roster-anyone {
+  margin: 1.5rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--graphite);
+}
+.roster-anyone a { color: var(--ink); text-underline-offset: 3px; }
 
 /* ---------- Card shell ---------- */
 
@@ -659,7 +680,7 @@ section { padding: clamp(4rem, 9vh, 6rem) 0; }
   margin: 0;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
   font-size: 0.65rem;
   line-height: 1.4;
   color: var(--graphite);
@@ -786,6 +807,13 @@ html:not(.js) .roster-fallback a { color: var(--ink); }
   aspect-ratio: 3 / 4;
 }
 
+.kids-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
 @media (min-width: 900px) {
   .kids-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -891,6 +919,20 @@ html:not(.js) .roster-fallback a { color: var(--ink); }
   }
 }
 
+.visit-map {
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--hairline);
+}
+
+.visit-map iframe {
+  display: block;
+  width: 100%;
+  height: clamp(260px, 38vw, 400px);
+  border: 0;
+}
+
 /* ---------- Footer ---------- */
 
 .site-footer {
@@ -910,6 +952,8 @@ html:not(.js) .roster-fallback a { color: var(--ink); }
   margin: 0;
   font-size: 1rem;
 }
+
+.site-footer a { color: var(--on-dark); text-underline-offset: 3px; }
 
 .footer-fine {
   font-size: 0.8125rem;
