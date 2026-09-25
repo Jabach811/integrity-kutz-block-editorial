@@ -81,6 +81,8 @@ button { font: inherit; color: inherit; }
 }
 .btn--sm .btn-ic { width: 1.8rem; height: 1.8rem; font-size: 0.875rem; }
 .btn:hover .btn-ic { transform: translate(2px, -2px) scale(1.06); }
+.btn-ic svg, .reel-btn svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.btn--sm .btn-ic svg { width: 0.875rem; height: 0.875rem; }
 
 /* ---------- nav ---------- */
 .nav {
@@ -316,6 +318,7 @@ button { font: inherit; color: inherit; }
 .card-ig:hover { color: var(--red); }
 .reel-nav { display: flex; gap: 0.5rem; justify-content: end; padding: 0.5rem var(--pad) 0; }
 .reel-btn {
+  display: grid; place-items: center; color: var(--paper);
   width: 3rem; height: 3rem; border-radius: 999px; border: 1px solid var(--hair); background: transparent;
   cursor: pointer; transition: background-color 0.5s var(--ease), transform 0.5s var(--ease);
 }
